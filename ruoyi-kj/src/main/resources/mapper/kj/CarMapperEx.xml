@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.kj.mapper.CarMapperEx">
+
+    <resultMap type="com.ruoyi.kj.vo.CarVo" id="CarVoResult" extends="com.ruoyi.kj.mapper.CarMapper.CarResult">
+        <result property="materialName"    column="materialName"    />
+        <result property="shipper"    column="shipper"    />
+        <result property="transport"    column="transport"    />
+        <result property="receiver"    column="receiver"    />
+    </resultMap>
+
+    <select id="selectCarVoListByCarNumber" resultMap="CarVoResult">
+        select kc.car_id, kc.car_number, kc.material_id, kc.shipper_id, kc.transport_id, kc.receiver_id, kc.customize1, kc.customize2, kc.customize3, kc.status, kc.del_flag, kc.create_by, kc.create_time, kc.update_by, kc.update_time, kc.remark,
+        km.material_name as materialName,sh.dept_name as shipper,tr.dept_name as transport,re.dept_name as receiver
+        from kj_car kc
+        left join kj_material km on kc.material_id = km.material_id
+        left join sys_dept sh on kc.shipper_id = sh.dept_id and ifnull(sh.del_flag,'0') != '2'
+        left join sys_dept tr on kc.transport_id = tr.dept_id and ifnull(tr.del_flag,'0') != '2'
+        left join sys_dept re on kc.receiver_id = re.dept_id and ifnull(re.del_flag,'0') != '2'
+        where kc.car_number = #{carNumber} and ifnull(kc.del_flag,'0') != '2' order by kc.car_id desc limit 0,1
+    </select>
+
+    <select id="selectCarVoList" parameterType="com.ruoyi.kj.domain.Car" resultMap="CarVoResult">
+        select kc.car_id, kc.car_number, kc.material_id, kc.shipper_id, kc.transport_id, kc.receiver_id, kc.customize1, kc.customize2, kc.customize3, kc.status, kc.del_flag, kc.create_by, kc.create_time, kc.update_by, kc.update_time, kc.remark,
+        km.material_name as materialName,sh.dept_name as shipper,tr.dept_name as transport,re.dept_name as receiver
+        from kj_car kc
+        left join kj_material km on kc.material_id = km.material_id
+        left join sys_dept sh on kc.shipper_id = sh.dept_id and ifnull(sh.del_flag,'0') != '2'
+        left join sys_dept tr on kc.transport_id = tr.dept_id and ifnull(tr.del_flag,'0') != '2'
+        left join sys_dept re on kc.receiver_id = re.dept_id and ifnull(re.del_flag,'0') != '2'
+        <where>
+            ifnull(kc.del_flag,'0') != '2'
+            <if test="carNumber != null  and carNumber != ''"> and kc.car_number = #{carNumber}</if>
+            <if test="materialId != null "> and kc.material_id = #{materialId}</if>
+            <if test="shipperId != null "> and kc.shipper_id = #{shipperId}</if>
+            <if test="transportId != null "> and kc.transport_id = #{transportId}</if>
+            <if test="receiverId != null "> and kc.receiver_id = #{receiverId}</if>
+            <if test="customize1 != null  and customize1 != ''"> and kc.customize1 = #{customize1}</if>
+            <if test="customize2 != null  and customize2 != ''"> and kc.customize2 = #{customize2}</if>
+            <if test="customize3 != null  and customize3 != ''"> and kc.customize3 = #{customize3}</if>
+            <if test="status != null  and status != ''"> and kc.status = #{status}</if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.kj.mapper.ReportMapper">
+    <resultMap id="ReportResult" type="Report">
+        <result property="carnumber"    column="car_number"    />
+        <result property="shipper"    column="shipper"    />
+        <result property="receiver"    column="receiver"    />
+        <result property="transport"    column="transport"    />
+        <result property="goods"    column="material_name"    />
+        <result property="remarks"    column="remark"    />
+        <result property="customize1"    column="customize1"    />
+        <result property="customize2"    column="customize2"    />
+        <result property="customize3"    column="customize3"    />
+        <result property="createby"    column="create_by"    />
+        <result property="updateby"    column="update_by"    />
+        <result property="carnum"    column="carnum"    />
+        <result property="firstweight"    column="first_weight"    />
+        <result property="secondweight"    column="second_weight"    />
+        <result property="netweight"    column="net_weight"    />
+    </resultMap>
+
+    <select id="selectReportList" resultMap="ReportResult">
+        select
+        <trim prefixOverrides=",">
+            <if test="carnumber != null">car_number,</if>
+            <if test="shipper != null">shipper,</if>
+            <if test="receiver != null">receiver,</if>
+            <if test="transport != null">transport,</if>
+            <if test="goods != null">material_name,</if>
+            <if test="customize1 != null">customize1,</if>
+            <if test="customize2 != null">customize2,</if>
+            <if test="customize3 != null">customize3,</if>
+            <if test="remarks != null">remark,</if>
+            <if test="createby != null">create_by,</if>
+            <if test="updateby != null">update_by,</if>
+        </trim>
+        Round(Sum(first_weight),2) as first_weight, Round(Sum(second_weight),2) As second_weight, Round(Sum(net_weight),2) As net_weight, Count(car_number) As carnum from KJ_Weight
+        <where>
+            <if test="carnumber != null  and carnumber != '' and carnumber != '全部'"> and car_number = #{carnumber}</if>
+            <if test="shipper != null  and shipper != '' and shipper != '全部'"> and shipper = #{shipper}</if>
+            <if test="receiver != null  and receiver != '' and receiver != '全部'"> and receiver = #{receiver}</if>
+            <if test="transport != null  and transport != '' and transport != '全部'"> and transport = #{transport}</if>
+            <if test="goods != null  and goods != '' and goods != '全部'"> and material_name = #{goods}</if>
+            <if test="remarks != null  and remarks != '' and remarks != '全部'"> and remark = #{remarks}</if>
+            <if test="customize1 != null  and customize1 != '' and customize1 != '全部'"> and customize1 = #{customize1}</if>
+            <if test="customize2 != null  and customize2 != '' and customize2 != '全部'"> and customize2 = #{customize2}</if>
+            <if test="customize3 != null  and customize3 != '' and customize3 != '全部'"> and customize3 = #{customize3}</if>
+            <if test="createby != null  and createby != '' and createby != '全部'"> and create_by = #{createby}</if>
+            <if test="updateby != null  and updateby != '' and updateby != '全部'"> and update_by = #{updateby}</if>
+            <if test="params.beginAddTime != null and params.beginAddTime != ''">
+                and create_time &gt;= #{params.beginAddTime}
+            </if>
+            <if test="params.endAddTime != null and params.endAddTime != ''">
+                and create_time &lt;= #{params.endAddTime}
+            </if>
+            <if test="params.beginFirstTime != null and params.beginFirstTime != ''">
+                and first_time &gt;= #{params.beginFirstTime}
+            </if>
+            <if test="params.endFirstTime!= null and params.endFirstTime != ''">
+                and first_time &lt;= #{params.endFirstTime}
+            </if>
+            <if test="params.beginSecondTime != null and params.beginSecondTime != ''">
+                and second_time &gt;= #{params.beginSecondTime}
+            </if>
+            <if test="params.endSecondTime != null and params.endSecondTime != ''">
+                and second_time &lt;= #{params.endSecondTime}
+            </if>
+            and del_flag = '0' and status = '0' and finish = 1
+        </where>
+        Group by
+        <trim prefixOverrides="," suffixOverrides=",">
+            <if test="carnumber != null">car_number,</if>
+            <if test="shipper != null">shipper,</if>
+            <if test="receiver != null">receiver,</if>
+            <if test="transport != null">transport,</if>
+            <if test="goods != null">material_name,</if>
+            <if test="customize1 != null">customize1,</if>
+            <if test="customize2 != null">customize2,</if>
+            <if test="customize3 != null">customize3,</if>
+            <if test="remarks != null">remark,</if>
+            <if test="createby != null">create_by,</if>
+            <if test="updateby != null">update_by,</if>
+        </trim>
+    </select>
+
+    <select id="selectRemarks" resultMap="ReportResult">
+        select distinct remark from kj_weight
+    </select>
+
+    <select id="selectCustomize1" resultMap="ReportResult">
+        select distinct customize1 from kj_weight
+    </select>
+
+    <select id="selectCustomize2" resultMap="ReportResult">
+        select distinct customize2 from kj_weight
+    </select>
+
+    <select id="selectCustomize3" resultMap="ReportResult">
+        select distinct customize3 from kj_weight
+    </select>
+</mapper>

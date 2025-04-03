@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.kj.mapper.DeviceMapper">
+    
+    <resultMap type="Device" id="DeviceResult">
+        <result property="deviceId"    column="device_id"    />
+        <result property="deviceType"    column="device_type"    />
+        <result property="deviceName"    column="device_name"    />
+        <result property="autoOpen"    column="auto_open"    />
+        <result property="deviceIp"    column="device_ip"    />
+        <result property="port"    column="port"    />
+        <result property="polling"    column="polling"    />
+        <result property="custom"    column="custom"    />
+        <result property="deviceAcc"    column="device_acc"    />
+        <result property="devicePas"    column="device_pas"    />
+        <result property="baudRate"    column="baud_rate"    />
+        <result property="dataBits"    column="data_bits"    />
+        <result property="parity"    column="parity"    />
+        <result property="stopBits"    column="stop_bits"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectDeviceVo">
+        select device_id, device_type, device_name, auto_open, device_ip, port, polling, custom, device_acc, device_pas, baud_rate, data_bits, parity, stop_bits, status, del_flag, create_by, create_time, update_by, update_time, remark from kj_device
+    </sql>
+
+    <select id="selectDeviceList" parameterType="Device" resultMap="DeviceResult">
+        <include refid="selectDeviceVo"/>
+        <where>  
+            <if test="deviceType != null  and deviceType != ''"> and device_type = #{deviceType}</if>
+            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="autoOpen != null  and autoOpen != ''"> and auto_open = #{autoOpen}</if>
+            <if test="deviceIp != null  and deviceIp != ''"> and device_ip = #{deviceIp}</if>
+            <if test="port != null  and port != ''"> and port = #{port}</if>
+            <if test="polling != null  and polling != ''"> and polling = #{polling}</if>
+            <if test="custom != null  and custom != ''"> and custom = #{custom}</if>
+            <if test="deviceAcc != null  and deviceAcc != ''"> and device_acc = #{deviceAcc}</if>
+            <if test="devicePas != null  and devicePas != ''"> and device_pas = #{devicePas}</if>
+            <if test="baudRate != null "> and baud_rate = #{baudRate}</if>
+            <if test="dataBits != null "> and data_bits = #{dataBits}</if>
+            <if test="parity != null  and parity != ''"> and parity = #{parity}</if>
+            <if test="stopBits != null "> and stop_bits = #{stopBits}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectDeviceByDeviceId" parameterType="Long" resultMap="DeviceResult">
+        <include refid="selectDeviceVo"/>
+        where device_id = #{deviceId}
+    </select>
+        
+    <insert id="insertDevice" parameterType="Device" useGeneratedKeys="true" keyProperty="deviceId">
+        insert into kj_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceType != null">device_type,</if>
+            <if test="deviceName != null and deviceName != ''">device_name,</if>
+            <if test="autoOpen != null">auto_open,</if>
+            <if test="deviceIp != null">device_ip,</if>
+            <if test="port != null">port,</if>
+            <if test="polling != null">polling,</if>
+            <if test="custom != null">custom,</if>
+            <if test="deviceAcc != null">device_acc,</if>
+            <if test="devicePas != null">device_pas,</if>
+            <if test="baudRate != null">baud_rate,</if>
+            <if test="dataBits != null">data_bits,</if>
+            <if test="parity != null">parity,</if>
+            <if test="stopBits != null">stop_bits,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceType != null">#{deviceType},</if>
+            <if test="deviceName != null and deviceName != ''">#{deviceName},</if>
+            <if test="autoOpen != null">#{autoOpen},</if>
+            <if test="deviceIp != null">#{deviceIp},</if>
+            <if test="port != null">#{port},</if>
+            <if test="polling != null">#{polling},</if>
+            <if test="custom != null">#{custom},</if>
+            <if test="deviceAcc != null">#{deviceAcc},</if>
+            <if test="devicePas != null">#{devicePas},</if>
+            <if test="baudRate != null">#{baudRate},</if>
+            <if test="dataBits != null">#{dataBits},</if>
+            <if test="parity != null">#{parity},</if>
+            <if test="stopBits != null">#{stopBits},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDevice" parameterType="Device">
+        update kj_device
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceType != null">device_type = #{deviceType},</if>
+            <if test="deviceName != null and deviceName != ''">device_name = #{deviceName},</if>
+            <if test="autoOpen != null">auto_open = #{autoOpen},</if>
+            <if test="deviceIp != null">device_ip = #{deviceIp},</if>
+            <if test="port != null">port = #{port},</if>
+            <if test="polling != null">polling = #{polling},</if>
+            <if test="custom != null">custom = #{custom},</if>
+            <if test="deviceAcc != null">device_acc = #{deviceAcc},</if>
+            <if test="devicePas != null">device_pas = #{devicePas},</if>
+            <if test="baudRate != null">baud_rate = #{baudRate},</if>
+            <if test="dataBits != null">data_bits = #{dataBits},</if>
+            <if test="parity != null">parity = #{parity},</if>
+            <if test="stopBits != null">stop_bits = #{stopBits},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where device_id = #{deviceId}
+    </update>
+
+    <delete id="deleteDeviceByDeviceId" parameterType="Long">
+        delete from kj_device where device_id = #{deviceId}
+    </delete>
+
+    <delete id="deleteDeviceByDeviceIds" parameterType="String">
+        delete from kj_device where device_id in 
+        <foreach item="deviceId" collection="array" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+    </delete>
+</mapper>

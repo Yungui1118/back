@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.kj.mapper.CardMapper">
+
+    <resultMap type="Card" id="CardResult">
+        <result property="cardId"    column="card_id"    />
+        <result property="cardNumber"    column="card_number"    />
+        <result property="carId"    column="car_id"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="carNumber"    column="car_number"    />
+    </resultMap>
+
+    <sql id="selectCardVo">
+        select card_id, card_number, car_id, status, del_flag, create_by, create_time, update_by, update_time, remark from kj_card
+    </sql>
+
+    <select id="selectCardList" parameterType="Card" resultMap="CardResult">
+        select cd.card_id, cd.card_number, cd.car_id, cd.status, cd.del_flag, cd.create_by, cd.create_time, cd.update_by, cd.update_time, cd.remark,ca.car_number car_number from kj_card cd
+        left join kj_car ca on cd.car_id = ca.car_id and ifnull(ca.del_flag,'0') != '2'
+        <where>
+            1=1
+            <if test="cardNumber != null  and cardNumber != ''"> and cd.card_number = #{cardNumber}</if>
+            <if test="carId != null "> and cd.car_id = #{carId}</if>
+            <if test="status != null  and status != ''"> and cd.status = #{status}</if>
+            and ifnull(cd.del_flag,'0') != '2'
+        </where>
+    </select>
+
+    <select id="selectCardByCarNumber" parameterType="String" resultMap="CardResult">
+        select cd.card_id, cd.card_number, cd.car_id, cd.status, cd.del_flag, cd.create_by, cd.create_time, cd.update_by, cd.update_time, cd.remark,ca.car_number car_number from kj_card cd
+        left join kj_car ca on cd.car_id = ca.car_id and ifnull(ca.del_flag,'0') != '2'
+        where ca.car_number = #{carNumber} and ifnull(cd.del_flag,'0') != '2' order by cd.card_id desc limit 0,1
+    </select>
+
+    <select id="selectCardByCardId" parameterType="Long" resultMap="CardResult">
+        <include refid="selectCardVo"/>
+        where card_id = #{cardId} and ifnull(del_flag,'0') != '2'
+    </select>
+
+    <insert id="insertCard" parameterType="Card" useGeneratedKeys="true" keyProperty="cardId">
+        insert into kj_card
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cardNumber != null and cardNumber != ''">card_number,</if>
+            <if test="carId != null">car_id,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cardNumber != null and cardNumber != ''">#{cardNumber},</if>
+            <if test="carId != null">#{carId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCard" parameterType="Card">
+        update kj_card
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cardNumber != null and cardNumber != ''">card_number = #{cardNumber},</if>
+            <if test="carId != null">car_id = #{carId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where card_id = #{cardId} and ifnull(del_flag,'0') != '2'
+    </update>
+
+    <update id="deleteCardByCardId" parameterType="Long">
+        update kj_card set del_flag = '2' where card_id = #{cardId}
+    </update>
+
+    <update id="deleteCardByCardIds" parameterType="String">
+        update kj_card set del_flag = '2' where card_id in
+        <foreach item="cardId" collection="array" open="(" separator="," close=")">
+            #{cardId}
+        </foreach>
+    </update>
+
+    <select id="selectCarNumberByCardNumber" resultType="java.lang.String">
+        select kc.car_number from kj_card kd
+        left join kj_car kc on kd.car_id = kc.car_id and ifnull(kc.del_flag,'0') != '2'
+        where kd.card_number = #{cardNumber} and ifnull(kd.del_flag,'0') != '2'
+    </select>
+</mapper>

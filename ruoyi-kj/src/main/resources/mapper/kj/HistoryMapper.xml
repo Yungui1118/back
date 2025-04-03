@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.kj.mapper.HistoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.kj.domain.History">
+        <id column="history_id" property="historyId"/>
+        <id column="weight_id" property="weightId"/>
+        <result column="original_content" property="originalContent"/>
+        <result column="after_content" property="afterContent"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.ruoyi.kj.domain.History">
+        insert into kj_weight_history (weight_id, original_content, after_content, create_by, create_time)
+        values (#{weightId,jdbcType=BIGINT}, #{originalContent,jdbcType=VARCHAR}, #{afterContent,jdbcType=VARCHAR},
+                #{createBy,jdbcType=VARCHAR}, sysdate())
+    </insert>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        select
+        wh.history_id, wh.weight_id, wh.original_content, wh.after_content, wh.create_by, wh.create_time,
+        w.weight_seq as weightSeq, w.car_number as carNumber,w.material_name as materialName,w.shipper as
+        shipper,w.transport as transport,
+        w.receiver as receiver,w.first_weight as firstWeight,w.second_weight as secondWeight,w.net_weight as
+        netWeight
+        from kj_weight_history wh
+        left join kj_weight w on wh.weight_id = w.weight_id
+        <where>
+            <if test="weightSeq != null  and weightSeq != ''">and w.weight_seq = #{weightSeq}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(wh.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(wh.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+        order by wh.history_id desc
+    </select>
+
+</mapper>

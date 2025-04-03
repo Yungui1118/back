@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.kj.mapper.WeightMapper">
+
+    <resultMap type="Weight" id="WeightResult">
+        <result property="weightId"    column="weight_id"    />
+        <result property="weightSeq"    column="weight_seq"    />
+        <result property="carNumber"    column="car_number"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="shipper"    column="shipper"    />
+        <result property="transport"    column="transport"    />
+        <result property="receiver"    column="receiver"    />
+        <result property="firstTime"    column="first_time"    />
+        <result property="firstImg"    column="first_img"    />
+        <result property="firstWeight"    column="first_weight"    />
+        <result property="secondTime"    column="second_time"    />
+        <result property="secondImg"    column="second_img"    />
+        <result property="secondWeight"    column="second_weight"    />
+        <result property="netWeight"    column="net_weight"    />
+        <result property="customize1"    column="customize1"    />
+        <result property="customize2"    column="customize2"    />
+        <result property="customize3"    column="customize3"    />
+        <result property="finish"    column="finish"    />
+        <result property="upload"    column="upload"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectWeightVo">
+        select weight_id, weight_seq, car_number, material_name, shipper, transport, receiver, first_time, first_img, first_weight, second_time, second_img, second_weight, net_weight, customize1, customize2, customize3, finish, upload, status, del_flag, create_by, create_time, update_by, update_time, remark from kj_weight
+    </sql>
+
+    <select id="selectWeightList" parameterType="Weight" resultMap="WeightResult">
+        <include refid="selectWeightVo"/>
+        <where>
+            ifnull(del_flag,'0') != '2'
+            <if test="weightSeq != null  and weightSeq != ''"> and weight_seq = #{weightSeq}</if>
+            <if test="carNumber != null  and carNumber != ''"> and car_number = #{carNumber}</if>
+            <if test="materialName != null  and materialName != ''"> and material_name like concat('%', #{materialName}, '%')</if>
+            <if test="shipper != null  and shipper != ''"> and shipper = #{shipper}</if>
+            <if test="transport != null  and transport != ''"> and transport = #{transport}</if>
+            <if test="receiver != null  and receiver != ''"> and receiver = #{receiver}</if>
+            <if test="params.beginfirstTime != null and params.beginfirstTime != ''">
+                and date_format(first_time,'%Y-%m-%d %H:%i:%s') &gt;= date_format(#{params.beginfirstTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="params.endfirstTime != null and params.endfirstTime != ''"><!-- 结束时间检索 -->
+                and date_format(first_time,'%Y-%m-%d %H:%i:%s') &lt;= date_format(#{params.endfirstTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="firstImg != null  and firstImg != ''"> and first_img = #{firstImg}</if>
+            <if test="firstWeight != null "> and first_weight = #{firstWeight}</if>
+            <if test="params.beginsecondTime != null and params.beginsecondTime != ''">
+                and date_format(second_time,'%Y-%m-%d %H:%i:%s') &gt;= date_format(#{params.beginsecondTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="params.endsecondTime != null and params.endsecondTime != ''"><!-- 结束时间检索 -->
+                and date_format(second_time,'%Y-%m-%d %H:%i:%s') &lt;= date_format(#{params.endsecondTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="secondImg != null  and secondImg != ''"> and second_img = #{secondImg}</if>
+            <if test="secondWeight != null "> and second_weight = #{secondWeight}</if>
+            <if test="netWeight != null "> and net_weight = #{netWeight}</if>
+            <if test="customize1 != null  and customize1 != ''"> and customize1 = #{customize1}</if>
+            <if test="customize2 != null  and customize2 != ''"> and customize2 = #{customize2}</if>
+            <if test="customize3 != null  and customize3 != ''"> and customize3 = #{customize3}</if>
+            <if test="finish != null "> and finish = #{finish}</if>
+            <if test="upload != null "> and upload = #{upload}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+        order by weight_id desc
+    </select>
+
+    <select id="selectWeightByWeightId" parameterType="Long" resultMap="WeightResult">
+        <include refid="selectWeightVo"/>
+        where weight_id = #{weightId}
+    </select>
+
+    <insert id="insertWeight" parameterType="Weight" useGeneratedKeys="true" keyProperty="weightId">
+        <!--        获取自增id-->
+        <selectKey keyProperty="weightId" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into kj_weight
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="weightSeq != null and weightSeq != ''">weight_seq,</if>
+            <if test="carNumber != null and carNumber != ''">car_number,</if>
+            <if test="materialName != null">material_name,</if>
+            <if test="shipper != null">shipper,</if>
+            <if test="transport != null">transport,</if>
+            <if test="receiver != null">receiver,</if>
+            <if test="firstTime != null">first_time,</if>
+            <if test="firstImg != null">first_img,</if>
+            <if test="firstWeight != null">first_weight,</if>
+            <if test="secondTime != null">second_time,</if>
+            <if test="secondImg != null">second_img,</if>
+            <if test="secondWeight != null">second_weight,</if>
+            <if test="netWeight != null">net_weight,</if>
+            <if test="customize1 != null and customize1 != ''">customize1,</if>
+            <if test="customize2 != null and customize2 != ''">customize2,</if>
+            <if test="customize3 != null and customize3 != ''">customize3,</if>
+            <if test="finish != null">finish,</if>
+            <if test="upload != null">upload,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="weightSeq != null and weightSeq != ''">#{weightSeq},</if>
+            <if test="carNumber != null and carNumber != ''">#{carNumber},</if>
+            <if test="materialName != null">#{materialName},</if>
+            <if test="shipper != null">#{shipper},</if>
+            <if test="transport != null">#{transport},</if>
+            <if test="receiver != null">#{receiver},</if>
+            <if test="firstTime != null">#{firstTime},</if>
+            <if test="firstImg != null">#{firstImg},</if>
+            <if test="firstWeight != null">#{firstWeight},</if>
+            <if test="secondTime != null">#{secondTime},</if>
+            <if test="secondImg != null">#{secondImg},</if>
+            <if test="secondWeight != null">#{secondWeight},</if>
+            <if test="netWeight != null">#{netWeight},</if>
+            <if test="customize1 != null and customize1 != ''">#{customize1},</if>
+            <if test="customize2 != null and customize2 != ''">#{customize2},</if>
+            <if test="customize3 != null and customize3 != ''">#{customize3},</if>
+            <if test="finish != null">#{finish},</if>
+            <if test="upload != null">#{upload},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWeight" parameterType="Weight">
+        update kj_weight
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="weightSeq != null and weightSeq != ''">weight_seq = #{weightSeq},</if>
+            <if test="carNumber != null and carNumber != ''">car_number = #{carNumber},</if>
+            <if test="materialName != null">material_name = #{materialName},</if>
+            <if test="shipper != null">shipper = #{shipper},</if>
+            <if test="transport != null">transport = #{transport},</if>
+            <if test="receiver != null">receiver = #{receiver},</if>
+            <if test="firstTime != null">first_time = #{firstTime},</if>
+            <if test="firstImg != null">first_img = #{firstImg},</if>
+            <if test="firstWeight != null">first_weight = #{firstWeight},</if>
+            <if test="secondTime != null">second_time = #{secondTime},</if>
+            <if test="secondImg != null">second_img = #{secondImg},</if>
+            <if test="secondWeight != null">second_weight = #{secondWeight},</if>
+            <if test="netWeight != null">net_weight = #{netWeight},</if>
+            <if test="customize1 != null and customize1 != ''">customize1 = #{customize1},</if>
+            <if test="customize2 != null and customize2 != ''">customize2 = #{customize2},</if>
+            <if test="customize3 != null and customize3 != ''">customize3 = #{customize3},</if>
+            <if test="finish != null">finish = #{finish},</if>
+            <if test="upload != null">upload = #{upload},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where weight_id = #{weightId}
+    </update>
+
+    <update id="deleteWeightByWeightId" parameterType="Long">
+        update kj_weight set del_flag = 2  where weight_id = #{weightId}
+    </update>
+
+    <update id="deleteWeightByWeightIds" parameterType="String">
+        update kj_weight set del_flag = 2  where weight_id in
+        <foreach item="weightId" collection="array" open="(" separator="," close=")">
+            #{weightId}
+        </foreach>
+    </update>
+
+    <select id="selectWeightByCarNumber" resultMap="WeightResult">
+        select weight_id, weight_seq, car_number, material_name, shipper, transport, receiver, first_time, first_img, first_weight, second_time, second_img, second_weight, net_weight, customize1, customize2, customize3, finish, upload, status, del_flag, create_by, create_time, update_by, update_time, remark
+        from kj_weight
+        where
+        car_number = #{carNumber}  and status = '0' and ifnull(del_flag,'0') != '2' order by weight_id desc limit 0,1
+    </select>
+
+    <select id="selectWeightByCardNumber" resultMap="WeightResult">
+        select kw.weight_id, kw.weight_seq, kw.car_number, kw.material_name, kw.shipper, kw.transport, kw.receiver, kw.first_time, kw.first_img, kw.first_weight, kw.second_time, kw.second_img, kw.second_weight, kw.net_weight, kw.customize1, kw.customize2, kw.customize3, kw.finish, kw.upload, kw.status, kw.del_flag, kw.create_by, kw.create_time, kw.update_by, kw.update_time, kw.remark
+        from kj_weight kw
+        left join kj_car kc on kw.car_number = kc.car_number and kc.status = '0' and ifnull(kc.del_flag,'0') != '2'
+        left join kj_card kcd on kc.car_id = kcd.car_id and kcd.status = '0' and ifnull(kcd.del_flag,'0') != '2'
+        where
+        kcd.card_number = #{cardNumber}  and kw.status = '0' and ifnull(kw.del_flag,'0') != '2' order by kw.weight_id desc limit 0,1
+    </select>
+</mapper>

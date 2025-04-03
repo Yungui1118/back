@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.kj.mapper.CarMapper">
+    
+    <resultMap type="Car" id="CarResult">
+        <result property="carId"    column="car_id"    />
+        <result property="carNumber"    column="car_number"    />
+        <result property="materialId"    column="material_id"    />
+        <result property="shipperId"    column="shipper_id"    />
+        <result property="transportId"    column="transport_id"    />
+        <result property="receiverId"    column="receiver_id"    />
+        <result property="customize1"    column="customize1"    />
+        <result property="customize2"    column="customize2"    />
+        <result property="customize3"    column="customize3"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCarVo">
+        select car_id, car_number, material_id, shipper_id, transport_id, receiver_id, customize1, customize2, customize3, status, del_flag, create_by, create_time, update_by, update_time, remark from kj_car
+    </sql>
+
+    <select id="selectCarList" parameterType="Car" resultMap="CarResult">
+        <include refid="selectCarVo"/>
+        <where>
+            ifnull(del_flag,'0') != '2'
+            <if test="carNumber != null  and carNumber != ''"> and car_number = #{carNumber}</if>
+            <if test="materialId != null "> and material_id = #{materialId}</if>
+            <if test="shipperId != null "> and shipper_id = #{shipperId}</if>
+            <if test="transportId != null "> and transport_id = #{transportId}</if>
+            <if test="receiverId != null "> and receiver_id = #{receiverId}</if>
+            <if test="customize1 != null  and customize1 != ''"> and customize1 = #{customize1}</if>
+            <if test="customize2 != null  and customize2 != ''"> and customize2 = #{customize2}</if>
+            <if test="customize3 != null  and customize3 != ''"> and customize3 = #{customize3}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectCarByCarId" parameterType="Long" resultMap="CarResult">
+        <include refid="selectCarVo"/>
+        where car_id = #{carId}
+    </select>
+
+    <select id="selectCarByCarNumber"  resultMap="CarResult">
+        <include refid="selectCarVo"/>
+        where car_number = #{carNumber} and del_flag = '0' limit 1
+    </select>
+        
+    <insert id="insertCar" parameterType="Car" useGeneratedKeys="true" keyProperty="carId">
+        insert into kj_car
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="carNumber != null and carNumber != ''">car_number,</if>
+            <if test="materialId != null">material_id,</if>
+            <if test="shipperId != null">shipper_id,</if>
+            <if test="transportId != null">transport_id,</if>
+            <if test="receiverId != null">receiver_id,</if>
+            <if test="customize1 != null and customize1 != ''">customize1,</if>
+            <if test="customize2 != null and customize2 != ''">customize2,</if>
+            <if test="customize3 != null and customize3 != ''">customize3,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="carNumber != null and carNumber != ''">#{carNumber},</if>
+            <if test="materialId != null">#{materialId},</if>
+            <if test="shipperId != null">#{shipperId},</if>
+            <if test="transportId != null">#{transportId},</if>
+            <if test="receiverId != null">#{receiverId},</if>
+            <if test="customize1 != null and customize1 != ''">#{customize1},</if>
+            <if test="customize2 != null and customize2 != ''">#{customize2},</if>
+            <if test="customize3 != null and customize3 != ''">#{customize3},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCar" parameterType="Car">
+        update kj_car
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="carNumber != null and carNumber != ''">car_number = #{carNumber},</if>
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="shipperId != null">shipper_id = #{shipperId},</if>
+            <if test="transportId != null">transport_id = #{transportId},</if>
+            <if test="receiverId != null">receiver_id = #{receiverId},</if>
+            <if test="customize1 != null and customize1 != ''">customize1 = #{customize1},</if>
+            <if test="customize2 != null and customize2 != ''">customize2 = #{customize2},</if>
+            <if test="customize3 != null and customize3 != ''">customize3 = #{customize3},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where car_id = #{carId}
+    </update>
+
+    <delete id="deleteCarByCarId" parameterType="Long">
+        delete from kj_car where car_id = #{carId}
+    </delete>
+
+    <delete id="deleteCarByCarIds" parameterType="String">
+        delete from kj_car where car_id in 
+        <foreach item="carId" collection="array" open="(" separator="," close=")">
+            #{carId}
+        </foreach>
+    </delete>
+</mapper>
